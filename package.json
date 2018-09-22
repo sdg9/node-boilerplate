@@ -2,31 +2,36 @@
   "name": "node-boilerplate",
   "version": "1.0.0",
   "description": "A boilerplate for node projects",
-  "main": "dist/index.js",
+  "main": "index.js",
+  "private": true,
   "license": "MIT",
   "engines": {
     "node": "10.8.0"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna run clean",
+    "lint": "eslint --cache --ignore-path .gitignore ./packages/*/src",
     "heroku-postbuild": "npm run build",
-    "build": "babel src/ --out-dir dist/ --ignore test.js",
-    "dev": "concurrently \"npm run build -- --watch\" \"nodemon -r dotenv/config dist/index.js\"",
+    "build": "lerna exec --parallel -- babel src/ --out-dir dist/ --presets @babel/preset-flow --presets @babel/preset-env",
+    "main-app": "nodemon -r dotenv/config index.js",
+    "dev": "concurrently \"yarn watch\" \"yarn main-app\" ",
     "flow": "flow",
-    "eslint": "eslint src/**/*",
-    "start": "node dist/index.js",
     "test": "jest",
-    "prettify": "prettier --write ./src/**/*.js"
+    "prettify": "prettier --write ./packages/*/src/**/*.js",
+    "watch": "yarn build -- -w"
   },
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.3",
-    "lodash": "^4.17.11"
-  },
-  "devDependencies": {
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
-    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-flow": "^7.0.0"
+  },
+  "devDependencies": {
     "babel-eslint": "^9.0.0",
     "concurrently": "^4.0.1",
     "dotenv": "^6.0.0",
@@ -41,6 +46,7 @@
     "eslint-plugin-react": "^7.11.1",
     "flow-bin": "^0.80.0",
     "jest": "^23.5.0",
+    "lerna": "^3.4.0",
     "nodemon": "^1.18.4",
     "prettier": "^1.14.2"
   },
